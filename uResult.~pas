@@ -68,8 +68,8 @@ begin
   lbTestTime.Caption := TimeToStr(stat.TestTime);
   lbMark.Caption := stat.Mark;
 
-  if(stat.Mark='12') then lbMark.Font.Color := clRed
-    else if (stat.Mark='3') then lbMark.Font.Color := clYellow
+  if(stat.Mark='Неудовлетворительно') then lbMark.Font.Color := clRed
+    else if (stat.Mark='Удовлетворительно') then lbMark.Font.Color := clYellow
       else lbMark.Font.Color := clGreen;
 end;
 

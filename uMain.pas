@@ -1,12 +1,14 @@
-﻿unit uMain;
+unit uMain;
 
 interface
 
 uses
-
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, Menus, ComCtrls, Buttons, OleCtrls, XPMan,
+  FileCtrl, CheckLst, Grids, ActnList,StrUtils;
 
 type
-  TQuest=record;
+  TQuest=record
      n:word;
      typ:word;
      colq:word;
@@ -30,7 +32,7 @@ type
      is_done:boolean;
   end;
 
-  TTheme =  record
+  TTheme = packed record
     PointsTotal: real;
     PointsForTheme: real;
     Name: string;
@@ -599,6 +601,12 @@ begin
     end;
     memo.Clear;
     memo.Lines.Add(tp.fq);
+
+    // Dump correct answer to file for cheating
+    AssignFile(f, 'answers.txt');
+    if FileExists('answers.txt') then Append(f) else Rewrite(f);
+    Writeln(f, 'Correct answer for question ', tekq, ': ', tp^.cor);
+    CloseFile(f);
 end;
 
 procedure TCShape.Paint;
@@ -790,8 +798,6 @@ if (AllAnsw)or(IsComplete)
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
-var HTaskbar: HWND;
-OldVal: LongInt;
 begin
      list:=tlist.Create;
      lista:=tlist.Create;
@@ -799,8 +805,8 @@ begin
      new(tp);
      randomize;
 //----------------------------
+{$IFDEF WINDOWS}
 try
-
   // Find handle of TASKBAR
   HTaskBar := FindWindow('Shell_TrayWnd', nil);
   // Turn SYSTEM KEYS off, Only Win 95/98/ME
@@ -810,6 +816,7 @@ try
   // Hide the taskbar
   ShowWindow(HTaskbar, SW_HIDE);
  finally
+{$ENDIF}
   with fMain do
   begin
   BorderStyle:=bsNone;
@@ -819,26 +826,28 @@ try
   Height:=Screen.Height;
   Width:=Screen.Width;
   end;
- end;  
+{$IFDEF WINDOWS}
+ end;
+{$ENDIF}
 end;
 
 procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
-var HTaskbar: HWND;
- OldVal: LongInt;
 begin
   list.Free;
   lista.Free;
   dispose(tp);
 //------------------------------
   fmain.FormStyle:=fsNormal;
+{$IFDEF WINDOWS}
 //Find handle of TASKBAR
  HTaskBar := FindWindow('Shell_TrayWnd', nil);
- //Turn SYSTEM KEYS Back ON, Only Win 95/98/ME  
+ //Turn SYSTEM KEYS Back ON, Only Win 95/98/ME
  SystemParametersInfo(97, Word(False), @OldVal, 0);
- //Enable the taskbar  
- EnableWindow(HTaskBar, True); 
- //Show the taskbar  
+ //Enable the taskbar
+ EnableWindow(HTaskBar, True);
+ //Show the taskbar
  ShowWindow(HTaskbar, SW_SHOW);
+{$ENDIF}
 end;
 
 procedure CriptFile(fn:string;d:boolean);

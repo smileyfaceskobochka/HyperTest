@@ -1,4 +1,4 @@
-п»їunit uResult;
+unit uResult;
 
 interface
 
@@ -43,9 +43,9 @@ implementation
 procedure TfmResults.FormCreate(Sender: TObject);
 begin
   with sgResults do begin
-    Cells[0,0] := 'РўРµРјР°';
-    Cells[1,0] := 'Р’РµСЂРЅРѕ';
-    Cells[2,0] := 'Р’СЃРµРіРѕ';
+    Cells[0,0] := 'Тема';
+    Cells[1,0] := 'Верно';
+    Cells[2,0] := 'Всего';
     Cells[3,0] := '%';
   end;
 end;
@@ -64,12 +64,12 @@ procedure TfmResults.SetStatistic(stat: TResultRec);
 begin
   lbPointsMax.Caption := IntToStr(stat.PointsMax);
   lbPointsGained.Caption := FloatToStrF(stat.PointsGained,ffFixed,10,5);
-  lbProcent.Caption := FloatToStrF(stat.PointsGained/stat.PointsMax*100 + 40,ffFixed,2,0);
+  lbProcent.Caption := FloatToStrF(stat.PointsGained/stat.PointsMax*100,ffFixed,2,0);
   lbTestTime.Caption := TimeToStr(stat.TestTime);
   lbMark.Caption := stat.Mark;
 
-  if(stat.Mark='132') then lbMark.Font.Color := clRed
-    else if (stat.Mark='123') then lbMark.Font.Color := clYellow
+  if(stat.Mark='Неудовлетворительно') then lbMark.Font.Color := clRed
+    else if (stat.Mark='Удовлетворительно') then lbMark.Font.Color := clYellow
       else lbMark.Font.Color := clGreen;
 end;
 
