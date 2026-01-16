@@ -1,0 +1,103 @@
+unit uResult;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Grids, StdCtrls,uMain, ExtCtrls;
+
+type
+  TfmResults = class(TForm)
+    GroupBox1: TGroupBox;
+    sgResults: TStringGrid;
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    lbPointsMax: TLabel;
+    lbPointsGained: TLabel;
+    lbProcent: TLabel;
+    lbTestTime: TLabel;
+    lbMark: TLabel;
+    procedure FormResize(Sender: TObject);
+    procedure sgResultsDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    procedure SetThemes(t: array of TTheme);
+    procedure SetStatistic(stat: TResultRec);
+  end;
+
+var
+  fmResults: TfmResults;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfmResults.FormCreate(Sender: TObject);
+begin
+  with sgResults do begin
+    Cells[0,0] := 'Тема';
+    Cells[1,0] := 'Верно';
+    Cells[2,0] := 'Всего';
+    Cells[3,0] := '%';
+  end;
+end;
+
+procedure TfmResults.FormResize(Sender: TObject);
+begin
+  with sgResults do begin
+    ColWidths[1] := 50;
+    ColWidths[2] := 50;
+    ColWidths[3] := 30;
+    ColWidths[0] := sgResults.Width - 155;
+  end;
+end;
+
+procedure TfmResults.SetStatistic(stat: TResultRec);
+begin
+  lbPointsMax.Caption := IntToStr(stat.PointsMax);
+  lbPointsGained.Caption := FloatToStrF(stat.PointsGained,ffFixed,10,5);
+  lbProcent.Caption := FloatToStrF(stat.PointsGained/stat.PointsMax*100,ffFixed,2,0);
+  lbTestTime.Caption := TimeToStr(stat.TestTime);
+  lbMark.Caption := stat.Mark;
+
+  if(stat.Mark='12') then lbMark.Font.Color := clRed
+    else if (stat.Mark='3') then lbMark.Font.Color := clYellow
+      else lbMark.Font.Color := clGreen;
+end;
+
+procedure TfmResults.SetThemes(t: array of TTheme);
+var i: integer;
+begin
+  if(Length(T)>0) then
+    sgResults.RowCount := Length(T)+1;
+    
+  for i := 0 to High(t) do with sgResults,T[i] do begin
+    Cells[0,i+1] := Name;
+    Cells[1,i+1] := FloatToStrF(PointsForTheme,ffFixed,10,3);
+    Cells[2,i+1] := FloatToStrF(PointsTotal,ffFixed,10,3);
+    if(PointsTotal <>0) then
+      Cells[3,i+1] := IntToStr(Trunc(100*PointsForTheme/PointsTotal));
+  end;
+end;
+
+procedure TfmResults.sgResultsDrawCell(Sender: TObject; ACol, ARow: Integer;
+  Rect: TRect; State: TGridDrawState);
+var s: string;
+begin
+  if(gdFixed in State) then with sgResults,Canvas do begin
+    Font.Style := [fsBold];
+    s:=Cells[ACol,AROw];
+    FillRect(Rect);
+    TextOut(Rect.Left+(Rect.Right-Rect.Left-TextWidth(s)) div 2,Rect.Top+5,s);
+  end;
+end;
+
+end.
