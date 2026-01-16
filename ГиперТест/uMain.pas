@@ -277,7 +277,7 @@ begin
                 sl.Free;
              end;
            3:begin
-                 // РЅРёС‡РµРіРѕ РЅРµ С‚Р°СЃСѓРµС‚СЃСЏ
+                 // ничего не тасуется
              end;
            4:begin
                 s:=tp^.answ;
@@ -417,7 +417,7 @@ end;
 function TfMain.GetWord;
 var i:word;
 begin
-     // С‡РµС‚РЅС‹Р№ РїРµСЂРІС‹Р№ 23
+     // четный первый 23
      if chet then n:=2*n-1
              else n:=n*2;
 
@@ -436,7 +436,7 @@ var i:word;
 begin
     memo.Clear;
     tp:=list.Items[x-1];
-    label2.Caption:='Р’РѕРїСЂРѕСЃ '+inttostr(x)+' РёР· '+inttostr(list.Count);
+    label2.Caption:='Вопрос '+inttostr(x)+' из '+inttostr(list.Count);
     pa:=lista.Items[x-1];
     fHelp.Hide;
 
@@ -448,7 +448,7 @@ begin
                               fPict.Show;
                               bitbtn1.Visible:=true;
                             end
-                            else showmessage('РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё С„Р°Р№Р» СЃ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј!');
+                            else showmessage('Не удалось найти файл с изображением!');
                           end
                      else begin
                         bitbtn1.Visible:=false;
@@ -601,12 +601,6 @@ begin
     end;
     memo.Clear;
     memo.Lines.Add(tp.fq);
-
-    // Dump correct answer to file for cheating
-    AssignFile(f, 'answers.txt');
-    if FileExists('answers.txt') then Append(f) else Rewrite(f);
-    Writeln(f, 'Correct answer for question ', tekq, ': ', tp^.cor);
-    CloseFile(f);
 end;
 
 procedure TCShape.Paint;
@@ -650,7 +644,7 @@ begin
                 s:=pt^.cor;
                 s1:=pa^.answ;
 
-           //     showmessage('РџСЂР°РІРёР»СЊРЅС‹Рµ: '+s+#10#13+'РћС‚РІРµС‚С‹ РІРІРµРґРµРЅС‹'+s1);
+           //     showmessage('Правильные: '+s+#10#13+'Ответы введены'+s1);
 
                 col_vp:=0;
                 col_np:=0;
@@ -661,7 +655,7 @@ begin
 
                 col_nep:=pt^.colq-col_pr;
 
-         //       showmessage('РљРѕР»РёС‡РµСЃС‚РІРѕ РїСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ: '+inttostr(COL_PR)+'РљРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРїСЂР°РІРёР»СЊРЅС‹С…: '+inttostr(col_nep));
+         //       showmessage('Количество правильных ответов: '+inttostr(COL_PR)+'Количество неправильных: '+inttostr(col_nep));
 
                 repeat
                    if pos(copy(s,1,pos(';',s)),s1)>0 then begin
@@ -764,14 +758,14 @@ begin
    end;
    
    proc:=round(sum_given*100/sum_cor);
-   if proc<oc_3 then oc:='РќРµСѓРґРѕРІР»РµС‚РІРѕСЂРёС‚РµР»СЊРЅРѕ'
-   else if proc<oc_4 then oc:='РЈРґРѕРІР»РµС‚РІРѕСЂРёС‚РµР»СЊРЅРѕ'
-        else if proc<oc_5 then oc:='РҐРѕСЂРѕС€Рѕ'
-             else oc:='РћС‚Р»РёС‡РЅРѕ';
+   if proc<oc_3 then oc:='Неудовлетворительно'
+   else if proc<oc_4 then oc:='Удовлетворительно'
+        else if proc<oc_5 then oc:='Хорошо'
+             else oc:='Отлично';
 
 {   repeat
-      messagedlg('РР· '+inttostr(sum_cor)+' РІРѕР·РјРѕР¶РЅС‹С… Р±Р°Р»Р»РѕРІ РїРѕР»СѓС‡РµРЅРѕ '+floattostrf(sum_given,ffFixed,10,5)+#13#10+'РџСЂРѕС†РµРЅС‚ РїСЂР°РІРёР»СЊРЅС‹С… РѕС‚РІРµС‚РѕРІ: '+inttostr(proc) +'%'+#10#13+'РћС†РµРЅРєР°: '+oc+#10#13+'Р’СЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ С‚РµСЃС‚Р°: '+timetostr(total_time-time),mtInformation,[mbOk],0)
-   until messagedlg('Р’С‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РёС‚Рµ Р·Р°РєСЂС‹С‚СЊ РѕРєРЅРѕ СЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°РјРё?',mtConfirmation,[mbOK,mbCancel],0)=mrOk;
+      messagedlg('Из '+inttostr(sum_cor)+' возможных баллов получено '+floattostrf(sum_given,ffFixed,10,5)+#13#10+'Процент правильных ответов: '+inttostr(proc) +'%'+#10#13+'Оценка: '+oc+#10#13+'Время выполнения теста: '+timetostr(total_time-time),mtInformation,[mbOk],0)
+   until messagedlg('Вы действительно хотите закрыть окно с результатами?',mtConfirmation,[mbOK,mbCancel],0)=mrOk;
 }
 
   with resultRec do begin
@@ -790,7 +784,7 @@ procedure TfMain.BitBtn2Click(Sender: TObject);
 begin
 if (AllAnsw)or(IsComplete)
   then GetResult
-  else if messagedlg('Р’С‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РёС‚Рµ РїСЂРµСЂРІР°С‚СЊ С‚РµСЃС‚ Рё РїРѕР»СѓС‡РёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚?',mtConfirmation,[mbOk,mbCancel],0)=mrOk
+  else if messagedlg('Вы действительно хотите прервать тест и получить результат?',mtConfirmation,[mbOk,mbCancel],0)=mrOk
      then begin
         IsComplete:=true;
         GetResult;
@@ -798,6 +792,8 @@ if (AllAnsw)or(IsComplete)
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
+var HTaskbar: HWND;
+OldVal: LongInt;
 begin
      list:=tlist.Create;
      lista:=tlist.Create;
@@ -805,8 +801,8 @@ begin
      new(tp);
      randomize;
 //----------------------------
-{$IFDEF WINDOWS}
 try
+
   // Find handle of TASKBAR
   HTaskBar := FindWindow('Shell_TrayWnd', nil);
   // Turn SYSTEM KEYS off, Only Win 95/98/ME
@@ -816,7 +812,6 @@ try
   // Hide the taskbar
   ShowWindow(HTaskbar, SW_HIDE);
  finally
-{$ENDIF}
   with fMain do
   begin
   BorderStyle:=bsNone;
@@ -826,28 +821,26 @@ try
   Height:=Screen.Height;
   Width:=Screen.Width;
   end;
-{$IFDEF WINDOWS}
- end;
-{$ENDIF}
+ end;  
 end;
 
 procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var HTaskbar: HWND;
+ OldVal: LongInt;
 begin
   list.Free;
   lista.Free;
   dispose(tp);
 //------------------------------
   fmain.FormStyle:=fsNormal;
-{$IFDEF WINDOWS}
 //Find handle of TASKBAR
  HTaskBar := FindWindow('Shell_TrayWnd', nil);
- //Turn SYSTEM KEYS Back ON, Only Win 95/98/ME
+ //Turn SYSTEM KEYS Back ON, Only Win 95/98/ME  
  SystemParametersInfo(97, Word(False), @OldVal, 0);
- //Enable the taskbar
- EnableWindow(HTaskBar, True);
- //Show the taskbar
+ //Enable the taskbar  
+ EnableWindow(HTaskBar, True); 
+ //Show the taskbar  
  ShowWindow(HTaskbar, SW_SHOW);
-{$ENDIF}
 end;
 
 procedure CriptFile(fn:string;d:boolean);
@@ -890,7 +883,7 @@ begin
 
      tem:='';
 
-// СЂР°СЃС€РёС„СЂРѕРІРєР° С„Р°Р№Р»Р°
+// расшифровка файла
 
    stream := TFileStream.Create(fOpenTest.fl.FileName,fmOpenRead);
    SetLength(s,stream.size);
@@ -926,12 +919,12 @@ begin
        end;
 
    if FileExists(path+s)=false then begin
-     showmessage('РќРµ РїСЂР°РІРёР»СЊРЅРѕ СѓРєР°Р·Р°РЅ РїСѓС‚СЊ Рє Р±Р°Р·Рµ');
+     showmessage('Не правильно указан путь к базе');
      exit;
    end;
 
 
-//Р—Р°РіСЂСѓР·РєР° С‚РµРј РёР· С„Р°Р№Р»Р° С‚РµРј 
+//Загрузка тем из файла тем 
    stream := TFileStream.Create(path+'\tema',fmOpenRead);
    SetLength(st,stream.size);
    stream.Read(st[1],stream.Size);
@@ -940,7 +933,7 @@ begin
    for i:=1 to Length(st) do
       st[i] := char(ord(st[i])-1);
 
-   st := AnsiReplaceStr(st,'В¤',#13#10);
+   st := AnsiReplaceStr(st,'¤',#13#10);
    lst := TStringList.Create;
    lst.Text := st;
 
@@ -954,9 +947,9 @@ begin
    SetLength(st,0);
    lst.Free;
 
-   //Р—Р°РіСЂСѓР·РєР° РІРѕРїСЂРѕСЃРѕРІ
+   //Загрузка вопросов
        if FileExists(path+s)=false then begin
-           showmessage('РќРµ РїСЂР°РІРёР»СЊРЅРѕ СѓРєР°Р·Р°РЅ РїСѓС‚СЊ Рє Р±Р°Р·Рµ');
+           showmessage('Не правильно указан путь к базе');
            exit;
        end;
 
@@ -975,45 +968,45 @@ begin
 
        repeat
            new(pz);
-           // РЅРѕРјРµСЂ
-           pz^.n:=strtoint( copy(s,1,pos('В¤',s)-1) );
-           delete(s,1,pos('В¤',s));
+           // номер
+           pz^.n:=strtoint( copy(s,1,pos('¤',s)-1) );
+           delete(s,1,pos('¤',s));
            
-           //С‚РёРї
+           //тип
            pz^.typ:=strtoint(s[1]);
-           delete(s,1,pos('В¤',s));
+           delete(s,1,pos('¤',s));
 
-           //РєРѕР»-РІРѕ РІР°СЂРёР°РЅС‚РѕРІ РѕС‚РІРµС‚Р°
-           pz^.colq:=strtoint(copy(s,1,pos('В¤',s)-1));
-           delete(s,1,pos('В¤',s));
+           //кол-во вариантов ответа
+           pz^.colq:=strtoint(copy(s,1,pos('¤',s)-1));
+           delete(s,1,pos('¤',s));
 
-           //С„РѕСЂРјСѓР»РёСЂРѕРІРєР°
-           pz^.fq:=copy(s,1,pos('В¤',s)-1);
-           delete(s,1,pos('В¤',s));
+           //формулировка
+           pz^.fq:=copy(s,1,pos('¤',s)-1);
+           delete(s,1,pos('¤',s));
 
-           //С„Р°СЂРёР°РЅС‚С‹ РѕС‚РІРµС‚РѕРІ
-           pz^.answ:=copy(s,1,pos('В¤',s)-1);
-           delete(s,1,pos('В¤',s));
+           //фарианты ответов
+           pz^.answ:=copy(s,1,pos('¤',s)-1);
+           delete(s,1,pos('¤',s));
 
-           // РёРјСЏ РєР°СЂС‚РёРЅРєРё (РµСЃР»Рё РЅРµС‚, С‚Рѕ "no")
-           pz^.pic:=copy(s,1,pos('В¤',s)-1);
-           delete(s,1,pos('В¤',s));
+           // имя картинки (если нет, то "no")
+           pz^.pic:=copy(s,1,pos('¤',s)-1);
+           delete(s,1,pos('¤',s));
 
-           // РїСЂР°РІРёР»СЊРЅС‹Рµ РѕС‚РІРµС‚С‹
-           pz^.cor:=copy(s,1,pos('В¤',s)-1);
-           delete(s,1,pos('В¤',s));
+           // правильные ответы
+           pz^.cor:=copy(s,1,pos('¤',s)-1);
+           delete(s,1,pos('¤',s));
 
-           //РІРµСЃ
-           pz^.ves:=strtoint(copy(s,1,pos('В¤',s)-1));
-           delete(s,1,pos('В¤',s));
+           //вес
+           pz^.ves:=strtoint(copy(s,1,pos('¤',s)-1));
+           delete(s,1,pos('¤',s));
 
-           //С‚РµРјР°
-           pz^.tema:=strtoint(copy(s,1,pos('В¤',s)-1));
-           delete(s,1,pos('В¤',s));
+           //тема
+           pz^.tema:=strtoint(copy(s,1,pos('¤',s)-1));
+           delete(s,1,pos('¤',s));
 
-           //РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
-           pz^.enab:=strtoint(copy(s,1,pos('В¤',s)-1));
-           delete(s,1,pos('В¤',s));
+           //доступность
+           pz^.enab:=strtoint(copy(s,1,pos('¤',s)-1));
+           delete(s,1,pos('¤',s));
            
            listo.Add(pz);
 
@@ -1055,7 +1048,7 @@ begin
           lista.Add(pa);
        end;
 
-       SortQ;  // СЃРѕСЂС‚РёСЂРѕРІРєР° СЃРїРёСЃРєР° РІРѕРїСЂРѕСЃРѕРІ
+       SortQ;  // сортировка списка вопросов
        SortA;
 
        tekq:=1;
@@ -1073,11 +1066,11 @@ begin
        bitbtn4.Enabled:=true;
 
        timer1.Enabled:=true;
-       label4.Caption:='Р’СЂРµРјСЏ:';
+       label4.Caption:='Время:';
        label4.Visible:=true;
 
-       fMain.Caption:='Р­РєР·Р°РјРµРЅР°С‚РѕСЂ v1.0 - '+ExtractFileName(fOpenTest.fl.FileName);
-       statusbar1.SimpleText:='РўРµСЃС‚: '+ExtractFileName(fOpenTest.fl.FileName);
+       fMain.Caption:='Экзаменатор v1.0 - '+ExtractFileName(fOpenTest.fl.FileName);
+       statusbar1.SimpleText:='Тест: '+ExtractFileName(fOpenTest.fl.FileName);
 
        if show_type=3 then sg.Enabled:=false;
     end;
@@ -1109,10 +1102,10 @@ end;
 procedure TfMain.Timer1Timer(Sender: TObject);
 begin
    time:=time-strtotime('0:00:01');
-   label4.Caption:='Р’СЂРµРјСЏ: '+timetostr(time);
+   label4.Caption:='Время: '+timetostr(time);
    if timetostr(time)='0:00:00'
       then begin
-          messagedlg('Р’СЂРµРјСЏ С‚РµСЃС‚Р° Р·Р°РєРѕРЅС‡РёР»РѕСЃСЊ!',mtInformation,[mbOK],0);
+          messagedlg('Время теста закончилось!',mtInformation,[mbOK],0);
           Timer1.Enabled:=false;
           IsComplete:=true;
           GetResult;
@@ -1121,7 +1114,7 @@ end;
 
 procedure TfMain.sgClick(Sender: TObject);
 begin
-// РїРѕРєР° РЅРёС‡РµРіРѕ
+// пока ничего
 
 end;
 
@@ -1160,7 +1153,7 @@ begin
            lowercase(dig);
            pa^.answ:=dig;
 
-           // С‚СѓС‚ РЅР°РґРѕ РїСЂРѕРІРµСЂСЏС‚СЊ РЅРµ РїСѓСЃС‚Р°СЏ Р»Рё СЃС‚СЂРѕРєР°!!!!!
+           // тут надо проверять не пустая ли строка!!!!!
            pa^.answ:=DelSpace(pa^.answ);
          end;
        4:begin
@@ -1171,7 +1164,7 @@ begin
                 if pos(inttostr(sh[i-1].tag),dig)>0 then delete(dig,pos(inttostr(sh[i-1].tag),dig),1);
 
             if dig<>'' then begin
-                messagedlg('РџРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РЅРµРєРѕСЂСЂРµРєС‚РЅР°! РџСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‚ РїРѕРІС‚РѕСЂС‹!',mtWarning,[mbOK],0);
+                messagedlg('Последовательность некорректна! Присутствуют повторы!',mtWarning,[mbOK],0);
                 exit;
             end;
 
@@ -1190,7 +1183,7 @@ begin
 
             end
             else begin
-                 messagedlg('РЈСЃС‚Р°РЅРѕРІР»РµРЅС‹ РЅРµ РІСЃРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ!',mtWarning,[mbOk],0);
+                 messagedlg('Установлены не все соответствия!',mtWarning,[mbOk],0);
                  exit;
             end;
             
@@ -1199,7 +1192,7 @@ begin
     pa^.is_done:=true;
 
     if AllAnsw then begin
-        messagedlg('РџРѕР»СѓС‡РµРЅС‹ РѕС‚РІРµС‚С‹ РЅР° РІСЃРµ РІРѕРїСЂРѕСЃС‹!'+#10#13+'Р§С‚РѕР±С‹ РїСЂРѕРІРµСЂРёС‚СЊ С‚РµСЃС‚ Рё РїРѕР»СѓС‡РёС‚СЊ РѕС†РµРЅРєСѓ РЅР°Р¶РјРёС‚Рµ РєРЅРѕРїРєСѓ Р РµР·СѓР»СЊС‚Р°С‚'+#10#13+'Р”Р»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РѕС‚РІРµС‚РѕРІ РЅРµРѕР±С…РѕРґРёРјРѕ РїРµСЂРµР№С‚Рё Рє РЅСѓР¶РЅРѕРјСѓ РІРѕРїСЂРѕСЃСѓ Рё РІРЅРµСЃС‚Рё РёР·РјРµРЅРµРЅРёСЏ!',mtInformation,[mbOk],0);
+        messagedlg('Получены ответы на все вопросы!'+#10#13+'Чтобы проверить тест и получить оценку нажмите кнопку Результат'+#10#13+'Для редактирования ответов необходимо перейти к нужному вопросу и внести изменения!',mtInformation,[mbOk],0);
         BitBtn2.Enabled:=true;
         exit;
     end;
@@ -1251,12 +1244,12 @@ if FileExists(path+'images\'+tp^.pic) then begin
     fPict.Pic.LoadFromFile(path+'images\'+tp^.pic);
     fPict.Show;
 end
-else showmessage('РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё С„Р°Р№Р» СЃ РёР·РѕР±СЂР°Р¶РµРЅРёРµРј!');
+else showmessage('Не удалось найти файл с изображением!');
 end;
 
 procedure TfMain.BitBtn3Click(Sender: TObject);
 begin
-  if (lb1.ItemIndex=-1)or(lb2.ItemIndex=-1) then showmessage('РќРµ РІС‹Р±СЂР°РЅС‹ СЌР»РµРјРµРЅС‚С‹ РґР»СЏ СѓСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ!')
+  if (lb1.ItemIndex=-1)or(lb2.ItemIndex=-1) then showmessage('Не выбраны элементы для установления соответствия!')
   else begin
      lb3.Items.Add(lb1.Items.Strings[lb1.itemindex]+' <-> '+lb2.Items.Strings[lb2.itemindex]);
      lb1.Items.Delete(lb1.itemindex);
@@ -1270,7 +1263,7 @@ end;
 procedure TfMain.BitBtn5Click(Sender: TObject);
 var s:string;
 begin
-   if lb3.ItemIndex=-1 then showmessage('РќРµ РІС‹Р±СЂР°РЅ РІР°СЂРёР°РЅС‚ РґР»СЏ СЂР°Р·Р±РёРµРЅРёСЏ!')
+   if lb3.ItemIndex=-1 then showmessage('Не выбран вариант для разбиения!')
    else begin
       s:=lb3.Items.Strings[lb3.itemindex];
       lb1.Items.Add(copy(s,1,pos('<->',s)-2));
@@ -1286,7 +1279,7 @@ begin
        fHelp.path:=path+'\images\';
        fHelp.Show;
    end
-   else showmessage('РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р» РїРѕРґСЃРєР°Р·РєРё!');
+   else showmessage('Не найден файл подсказки!');
 end;
 
 
@@ -1312,7 +1305,7 @@ begin
               else begin
                     if (PTAnswer(lista.Items[tekq-1])^.is_done)and(not(AllAnsw)) then
                       BitBtn4Click(Self);
-                      // showmessage('Р§С‚РѕР±С‹ РїРµСЂРµР№С‚Рё Рє СЃР»РµРґСѓСЋС‰РµРјСѓ РЅРµРѕС‚РІРµС‡РµРЅРЅРѕРјСѓ РІРѕРїСЂРѕСЃСѓ РЅР°Р¶РјРёС‚Рµ OK!');
+                      // showmessage('Чтобы перейти к следующему неотвеченному вопросу нажмите OK!');
                     sg.Col:=tekq-1;
               end;
         end;
